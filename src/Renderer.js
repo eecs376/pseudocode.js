@@ -882,6 +882,11 @@ Renderer.prototype._buildTree = function (node) {
                 'output': 'Output: ',
                 'print': 'print ',
                 'return': 'return ',
+                'accept': 'accept',
+                'reject': 'reject',
+                'loop': 'loop',
+                'simulate': 'simulate ',
+                'construct': 'construct ',
             }[stmtName];
 
             this._newLine();

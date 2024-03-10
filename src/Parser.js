@@ -40,6 +40,11 @@
  *     <statement>     :== <state> | <return> | <print>
  *     <state>         :== \STATE <open-text>
  *     <return>        :== \RETURN <open-text>
+ *     <accept>        :== \ACCEPT
+ *     <reject>        :== \REJECT
+ *     <loop>          :== \LOOP
+ *     <simulate>      :== \SIMULATE
+ *     <construct>     :== \CONSTRUCT
  *     <print>         :== \PRINT <open-text>
  *
  *     <commands>      :== <break> | <continue>
@@ -398,7 +403,7 @@ Parser.prototype._parseUpon = function () {
 };
 
 var IO_STATEMENTS = ['ensure', 'require', 'input', 'output'];
-var STATEMENTS = ['state', 'print', 'return'];
+var STATEMENTS = ['state', 'print', 'return', 'accept', 'reject', 'loop', 'simulate', 'construct'];
 Parser.prototype._parseStatement = function (acceptStatements) {
     if (!this._lexer.accept('func', acceptStatements)) return null;
 
