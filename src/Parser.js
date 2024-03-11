@@ -61,9 +61,10 @@
  *
  *     <atom>          :== <ordinary>[1..n] | <special> | <symbol>
  *                         | <size> | <font> | <bool> | <math>
- *     <name>          :== <ordinary>
+ *     <name>          :== <close-text>
+ *     <params>        :== <close-text>
  *
- *     <call>          :== \CALL{<name>}({<close-text>})
+ *     <call>          :== \CALL{<name>}({<params>})
  *     <special>       :== \\ | \{ | \} | \$ | \& | \# | \% | \_
  *     <cond-symbol>   :== \AND | \OR | \NOT | \TRUE | \FALSE | \TO | \DOWNTO
  *     <text-symbol>   :== \textbackslash
@@ -291,10 +292,10 @@ Parser.prototype._parseFunction = function () {
     var lexer = this._lexer;
     if (!lexer.accept('func', ['function', 'procedure'])) return null;
 
-    // \FUNCTION{funcName}{funcArgs}
+    // \FUNCTION{<name>}{<params>}
     var funcType = this._lexer.get().text; // FUNCTION or PROCEDURE
     lexer.expect('open');
-    var funcName = lexer.expect('ordinary');
+    var funcNode = this._parseCloseText();
     lexer.expect('close');
     lexer.expect('open');
     var argsNode = this._parseCloseText();
@@ -304,8 +305,8 @@ Parser.prototype._parseFunction = function () {
     // \ENDFUNCTION
     lexer.expect('func', `end${funcType}`);
 
-    var functionNode = new ParseNode('function',
-                                     { type: funcType, name: funcName });
+    var functionNode = new ParseNode('function', { type: funcType });
+    functionNode.addChild(funcNode);
     functionNode.addChild(argsNode);
     functionNode.addChild(blockNode);
     return functionNode;
@@ -444,14 +445,14 @@ Parser.prototype._parseCall = function () {
 
     var anyWhitespace = lexer.get().whitespace;
 
-    // \CALL { <ordinary> } ({ <text> })[0..1]
+    // \CALL { <close-text> } ({ <text> })[0..1]
     lexer.expect('open');
-    var funcName = lexer.expect('ordinary');
+    var funcNode = this._parseCloseText();
     lexer.expect('close');
 
     var callNode = new ParseNode('call');
     callNode.whitespace = anyWhitespace;
-    callNode.value = funcName;
+    callNode.addChild(funcNode);
 
     lexer.expect('open');
     var argsNode = this._parseCloseText();

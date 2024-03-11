@@ -224,9 +224,12 @@ TextEnvironment.prototype.renderToHTML = function (backend) {
                 // \CALL{funcName}{funcArgs}
                 // ==>
                 // funcName(funcArgs)
-                this._html.beginSpan('ps-funcname').putText(text).endSpan();
+                var funcNode = node.children[0];
+                this._html.beginSpan('ps-funcname');
+                this._renderCloseText(funcNode, backend);
+                this._html.endSpan();
                 this._html.write('(');
-                var argsTextNode = node.children[0];
+                var argsTextNode = node.children[1];
                 this._renderCloseText(argsTextNode, backend);
                 this._html.write(')');
                 break;
@@ -676,18 +679,18 @@ Renderer.prototype._buildTree = function (node) {
             break;
         // ----------------- Mixture (Groups + Lines) -------------------
         case 'function':
-            // \FUNCTION{<ordinary>}{<text>} <block> \ENDFUNCTION
+            // \FUNCTION{<close-text>}{<text>} <block> \ENDFUNCTION
             // ==>
-            // function <ordinary>(<text>)
+            // function <close-text>(<text>)
             // ...
             // end function
             var funcType = node.value.type.toLowerCase();
-            var defFuncName = node.value.name;
-            textNode = node.children[0];
-            var blockNode = node.children[1];
+            var funcNode = node.children[0];
+            textNode = node.children[1];
+            var blockNode = node.children[2];
             this._newLine();
             this._typeKeyword(`${funcType} `);
-            this._typeFuncName(defFuncName);
+            this._buildTree(funcNode);
             this._typeText('(');
             this._buildTree(textNode);
             this._typeText(')');
