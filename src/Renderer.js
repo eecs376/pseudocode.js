@@ -887,6 +887,7 @@ Renderer.prototype._buildTree = function (node) {
                 'return': 'return ',
                 'accept': 'accept',
                 'reject': 'reject',
+                'halt': 'halt',
                 'loop': 'loop',
                 'simulate': 'simulate ',
                 'construct': 'construct ',
