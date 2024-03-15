@@ -690,7 +690,11 @@ Renderer.prototype._buildTree = function (node) {
             var blockNode = node.children[2];
             this._newLine();
             this._typeKeyword(`${funcType} `);
+
+            this._html.beginSpan('ps-funcname');
             this._buildTree(funcNode);
+            this._html.endSpan();
+
             this._typeText('(');
             this._buildTree(textNode);
             this._typeText(')');
