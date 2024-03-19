@@ -299,7 +299,7 @@ module.exports = ParseError;
  * than Tex/LaTeX for the convinience of implementation. As a consequence, the
  * grammar is context-free, which can be expressed in production rules:
  *
- *     <pseudo>        :== ( <algorithm> | <algorithmic> )[0..n]
+ *     <pseudo>        :== ( <algorithm> | <algorithmic> | <alginline> )[0..n]
  *
  *     <algorithm>     :== \begin{algorithm}
  *                           ( <caption> | <algorithmic> )[0..n]
@@ -345,6 +345,8 @@ module.exports = ParseError;
  *     <continue>      :== \CONTINUE
  *
  *     <comment>       :== \COMMENT{<close-text>}
+ *
+ *     <alginline>     :== <open-text>
  *
  *     <cond>          :== <close-text>
  *     <open-text>     :== ( <atom> | <call> ) <open-text> |
@@ -442,12 +444,19 @@ Parser.prototype.parse = function () {
         if (envName === null) break;
 
         var envNode;
-        if (envName === 'algorithm')
+        if (envName === 'algorithm') {
             envNode = this._parseAlgorithmInner();
-        else if (envName === 'algorithmic')
+        }
+        else if (envName === 'algorithmic') {
             envNode = this._parseAlgorithmicInner();
-        else
+        }
+        else if (envName === 'alginline') {
+            root.type = 'root-inline'; // places this in a span rather than div
+            envNode = this._parseAlgorithmInline();
+        }
+        else {
             throw new ParseError(`Unexpected environment ${envName}`);
+        }
 
         this._closeEnvironment(envName);
         root.addChild(envNode);
@@ -758,6 +767,7 @@ Parser.prototype._parseCond =
 Parser.prototype._parseCloseText = function () {
     return this._parseText('close');
 };
+Parser.prototype._parseAlgorithmInline =
 Parser.prototype._parseOpenText = function () {
     return this._parseText('open');
 };
@@ -1478,6 +1488,11 @@ Renderer.prototype._buildTree = function (node) {
             this._beginGroup('root');
             this._buildTreeForAllChildren(node);
             this._endGroup();
+            break;
+        case 'root-inline':
+            this._html.beginSpan('ps-root');
+            this._buildTreeForAllChildren(node);
+            this._html.endSpan();
             break;
         case 'algorithm':
             // First, decide the caption if any

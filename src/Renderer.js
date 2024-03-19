@@ -629,6 +629,11 @@ Renderer.prototype._buildTree = function (node) {
             this._buildTreeForAllChildren(node);
             this._endGroup();
             break;
+        case 'root-inline':
+            this._html.beginSpan('ps-root');
+            this._buildTreeForAllChildren(node);
+            this._html.endSpan();
+            break;
         case 'algorithm':
             // First, decide the caption if any
             var lastCaptionNode;

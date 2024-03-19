@@ -252,6 +252,16 @@
         \end{algorithmic}
         \end{algorithm}
     </pre>
+    <p>
+      This is a test of the <code>alginline</code> environment in
+      a <code>code</code> element,
+      <code id="test-inline">
+        \begin{alginline}
+        \CALL{Partition}{$A, p, r$}
+        \end{alginline}
+      </code>,
+      for inline algorithmic code.
+    </p>
     <script>
         pseudocode.renderElement(document.getElementById("test-basics"),
                                  {
@@ -271,6 +281,7 @@
                                      titlePrefix: "My pretty Algorithm"
                                  });                                   
         pseudocode.renderClass("scopeline-pseudocode", { scopeLines: true });
+        pseudocode.renderElement(document.getElementById("test-inline"));
     </script>
 </body>
 </html>

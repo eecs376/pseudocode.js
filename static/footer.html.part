@@ -17,6 +17,7 @@
                                      titlePrefix: "My pretty Algorithm"
                                  });                                   
         pseudocode.renderClass("scopeline-pseudocode", { scopeLines: true });
+        pseudocode.renderElement(document.getElementById("test-inline"));
     </script>
 </body>
 </html>
